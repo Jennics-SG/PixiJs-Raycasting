@@ -5,10 +5,16 @@
 
 import * as PIXI from 'pixi.js';
 import Caster from './caster';
+import Ray from './ray';
+import Boundary from './boundary';
 
 export default class Application {
 
-    private app : PIXI.Application;
+    private app: PIXI.Application;
+
+    private caster: Caster;
+
+    private boundaries: Array<Boundary>
 
     constructor(){
         this.app = new PIXI.Application<HTMLCanvasElement>({
@@ -20,14 +26,35 @@ export default class Application {
             antialias: true
         });
 
-        const caster: Caster = new Caster(
+        this.boundaries = new Array();
+
+        // Create randomised boundaries
+
+        for(let i = 0; i < 3; i++){
+            let p1 = new PIXI.Point(
+                Math.floor(Math.random() * this.app.view.width),
+                Math.floor(Math.random() * this.app.view.height)
+            );
+            let p2 = new PIXI.Point(
+                Math.floor(Math.random() * this.app.view.width),
+                Math.floor(Math.random() * this.app.view.height)
+            );
+            const bound = new Boundary(p1.x, p1.y, p2.x, p2.y);
+            this.boundaries.push(bound)
+            this.app.stage.addChild(bound);
+        }
+
+        this.caster = new Caster(
             this.app.view.width / 2,
             this.app.view.height / 2,
         );
-        const casterView = caster.drawCirc();
-        this.app.stage.addChild(casterView)
+        this.app.stage.addChild(this.caster);
+
+        this.app.ticker.add(this.delta.bind(this));
     }
 
+    delta(){
+        this.caster.look(this.boundaries)
+    }
 }
-
 window.addEventListener('DOMContentLoaded', () => new Application);
