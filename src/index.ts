@@ -18,8 +18,7 @@ export default class Application {
 
     constructor(){
         this.app = new PIXI.Application<HTMLCanvasElement>({
-            height: 720,
-            width: 1080,
+            resizeTo: window,
             backgroundColor: 0x000000,
             hello: true,
             view: <HTMLCanvasElement>document.getElementById('cont'),
