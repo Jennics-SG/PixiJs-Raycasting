@@ -46,7 +46,8 @@ export default class Ray extends Graphics{
         const y4: number = this.pos.y + this.dir.y;
 
         const den: number = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-        
+
+        // If the denominator is 0 the points will not intersect
         if (den === 0) return;
 
         const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
