@@ -3,22 +3,25 @@
  *  Jimy Houlbrook
  */
 
-import { Point, Graphics } from "pixi.js";
+import { Point, Graphics, Color } from "pixi.js";
 import '@pixi/math-extras';
 import Boundary from "./boundary";
 
 export default class Ray extends Graphics{
-    
+
     public pos: Point;
     private dir: Point;
 
-    constructor(pos: Point, angle: number){
+    constructor(pos: Point, angle: number, hue: number){
         super()
 
         this.pos = pos
         this.dir = this.vectorFromAngle(angle);
 
-        this.lineStyle(5, 0xffffff);
+        const tint = new Color({h: hue, s: 100, v: 100});
+
+        this.lineStyle(5, "#ffffff");
+        this.tint = tint;
 
         this.moveTo(this.pos.x, this.pos.y);
         this.lineTo(this.pos.x + this.dir.x, this.pos.y + this.dir.y);
@@ -29,7 +32,7 @@ export default class Ray extends Graphics{
     }
 
     pointWillIntersect(b: Boundary): Point | undefined{
-        // Im not gonna pretend to understand this maths, 
+        // Im not gonna pretend to understand this maths,
         // it has convinced me that maths is infact dark magic.
         // REF: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
 

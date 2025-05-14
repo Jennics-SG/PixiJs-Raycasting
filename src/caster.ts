@@ -7,7 +7,7 @@ import { Graphics, Point } from "pixi.js";
 import Ray from "./ray";
 import Boundary from "./boundary";
 
-export default class Caster extends Graphics{
+export default class Caster extends Graphics {
     // Array to hold rays
     public rays: Array<Ray>;
 
@@ -15,64 +15,67 @@ export default class Caster extends Graphics{
     public pos: Point;
     public r: number;
 
-    constructor(x: number = 0, y: number = 0, r: number = 30){
+    constructor(x: number = 0, y: number = 0, r: number = 30) {
         super()
 
         this.pos = new Point(x, y);
         this.r = r;
 
-        this.beginFill(0xffffff);
-        this.drawCircle(x, y, r);
-        this.endFill();
+        // this.beginFill(0xffffff);
+        // this.drawCircle(x, y, r);
+        // this.endFill();
 
         this.rays = new Array();
-        for(let i = 0; i < 360; i += 5){
-            this.rays.push(new Ray(this.pos, this.degreeToRadian(i)))
+        let hue = 0
+        for (let i = 0; i < 360; i += 2) {
+            const ray = new Ray(this.pos, this.degreeToRadian(i), hue);
+            hue += 2;
+            this.rays.push(ray);
         }
 
         window.addEventListener('mousemove', e => this.updatePos(e.clientX, e.clientY));
     }
 
-    updatePos(x: number, y: number){
+    updatePos(x: number, y: number) {
         this.pos.x = x;
         this.pos.y = y;
 
-        for(const ray of this.rays){
+        for (const ray of this.rays) {
             ray.pos.x = x;
             ray.pos.y = y;
             ray.draw();
         }
 
-        this.clear();
-        this.beginFill(0xffffff);
-        this.drawCircle(this.pos.x, this.pos.y, this.r);
-        this.endFill();
+        // this.clear();
+        // this.beginFill(0xffffff);
+        // this.drawCircle(this.pos.x, this.pos.y, this.r);
+        // this.endFill();
     }
 
-    look(boundaries: Array<Boundary>){
-        for(const ray of this.rays){
+    look(boundaries: Array<Boundary>) {
+        for (const ray of this.rays) {
             let closest: Point | undefined;
-            for(const boundary of boundaries){
-                let max = Infinity;
+            let max = Infinity;
+            for (const boundary of boundaries) {
                 const pt = ray.pointWillIntersect(boundary);
-                if(pt != undefined){
+                if (pt != undefined) {
                     const d = this.distanceBetweenPoints(pt);
-                    if(d <= max){
+                    if (d <= max) {
                         max = d;
                         closest = pt;
                     }
                 }
             }
-            if(closest){
+            if (closest) {
                 ray.lookAt(closest);
-                this.addChild(ray);
+                this.addChildAt(ray, 0);
             } else {
                 ray.clear();
             }
         }
     }
 
-    distanceBetweenPoints(pt: Point){
+    distanceBetweenPoints(pt: Point) {
         const x1: number = this.pos.x;
         const y1: number = this.pos.y;
         const x2: number = pt.x;
@@ -84,7 +87,7 @@ export default class Caster extends Graphics{
         return Math.sqrt(xd ** 2 + yd ** 2);
     }
 
-    degreeToRadian(d: number): number{
+    degreeToRadian(d: number): number {
         return d * (Math.PI / 180);
     }
 }
