@@ -21,15 +21,12 @@ export default class Caster extends Graphics {
         this.pos = new Point(x, y);
         this.r = r;
 
-        // this.beginFill(0xffffff);
-        // this.drawCircle(x, y, r);
-        // this.endFill();
-
         this.rays = new Array();
         let hue = 0
-        for (let i = 0; i < 360; i += 2) {
+        const angleDelta = 0.5
+        for (let i = 0; i < 360; i += angleDelta) {
             const ray = new Ray(this.pos, this.degreeToRadian(i), hue);
-            hue += 2;
+            hue += angleDelta;
             this.rays.push(ray);
         }
 
