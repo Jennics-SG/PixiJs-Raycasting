@@ -13,13 +13,13 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^3.0.1",
-    "pixi.js": "^7.3.2",
+    "pixi.js": "^8.10.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@pixi/math-extras": "^7.3.2"
+    "@pixi/math-extras": "^7.4.3"
   }
 }

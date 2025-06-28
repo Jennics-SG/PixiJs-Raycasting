@@ -3,11 +3,12 @@
  *  16/11/23
  */
 
-import { Graphics, Point } from "pixi.js";
+import { Graphics, Point, Application } from "pixi.js";
 import Ray from "./ray";
 import Boundary from "./boundary";
 
 export default class Caster extends Graphics {
+
     // Array to hold rays
     public rays: Array<Ray>;
 
@@ -15,11 +16,18 @@ export default class Caster extends Graphics {
     public pos: Point;
     public r: number;
 
-    constructor(x: number = 0, y: number = 0, r: number = 30) {
+    private game
+
+    constructor(x: number = 0, y: number = 0, r: number = 30, game: Application) {
         super()
+
+        this.game = game;
 
         this.pos = new Point(x, y);
         this.r = r;
+
+        // this.circle(x, y, r);
+        // this.stroke({width: 5, color: 0xffffff})
 
         this.rays = new Array();
         let hue = 0
@@ -44,9 +52,8 @@ export default class Caster extends Graphics {
         }
 
         // this.clear();
-        // this.beginFill(0xffffff);
-        // this.drawCircle(this.pos.x, this.pos.y, this.r);
-        // this.endFill();
+        // this.circle(this.pos.x, this.pos.y, this.r);
+        // this.stroke({width: 5, color: 0xffffff});
     }
 
     look(boundaries: Array<Boundary>) {

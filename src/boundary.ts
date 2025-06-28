@@ -15,8 +15,8 @@ export default class Boundary extends Graphics{
         this.start = new Point(x1, y1);
         this.fin = new Point(x2, y2);
 
-        this.lineStyle(5, 0xffffff);
         this.moveTo(this.start.x, this.start.y);
         this.lineTo(this.fin.x, this.fin.y);
+        this.stroke({width: 5, color: 0xffffff});
     }
 }

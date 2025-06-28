@@ -7,31 +7,32 @@ import { Point, Graphics, Color } from "pixi.js";
 import '@pixi/math-extras';
 import Boundary from "./boundary";
 
-export default class Ray extends Graphics{
+export default class Ray extends Graphics {
 
     public pos: Point;
     private dir: Point;
 
-    constructor(pos: Point, angle: number, hue: number){
+    constructor(pos: Point, angle: number, hue: number) {
         super()
 
         this.pos = pos
         this.dir = this.vectorFromAngle(angle);
 
-        const tint = new Color({h: hue, s: 100, v: 100});
+        const tint = new Color({ h: hue, s: 100, v: 100 });
 
-        this.lineStyle(5, "#ffffff");
-        this.tint = tint;
+        // this.lineStyle(5, "#FFFFFF");
+        // this.tint = tint;
 
         this.moveTo(this.pos.x, this.pos.y);
         this.lineTo(this.pos.x + this.dir.x, this.pos.y + this.dir.y);
+        this.stroke({ width: 5, color: 0xFF0000 });
     }
 
     vectorFromAngle(a: number): Point {
         return new Point(Math.cos(a), Math.sin(a))
     }
 
-    pointWillIntersect(b: Boundary): Point | undefined{
+    pointWillIntersect(b: Boundary): Point | undefined {
         // Im not gonna pretend to understand this maths,
         // it has convinced me that maths is infact dark magic.
         // REF: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
@@ -64,19 +65,17 @@ export default class Ray extends Graphics{
         );
     }
 
-    draw(){
+    draw() {
         this.clear();
-        this.lineStyle(5, 0xffffff);
         this.moveTo(this.pos.x, this.pos.y);
         this.lineTo(this.pos.x + this.dir.x, this.pos.y + this.dir.y);
+        this.stroke({ width: 5, color: 0xff0000 });
     }
 
-    lookAt(p: Point){
+    lookAt(p: Point) {
         this.dir.x = p.x - this.pos.x
         this.dir.y = p.y - this.pos.y;
-        this.dir.normalize()
 
         this.draw();
     }
-
 }
