@@ -20,6 +20,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@pixi/math-extras": "^7.4.3"
+    "@pixi/math-extras": "^7.4.3",
+    "@use-gpu/wgsl-loader": "^0.16.0",
+    "@wgslx/wgslx-loader": "^0.0.11",
+    "raw-loader": "^4.0.2"
   }
 }

@@ -25,8 +25,8 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(glsl|vs|fs)$/,
-        type: 'asset/source' // loads GLSL files as strings in Webpack 5
+        test: /\.(glsl)$/,
+        use: 'raw-loader'
       }
     ]
   }

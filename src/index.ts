@@ -7,17 +7,16 @@ import * as PIXI from 'pixi.js';
 import Caster from './caster';
 import Ray from './ray';
 import Boundary from './boundary';
-import fragment from "./shaders/frag.glsl";
-import vertex from "./shaders/vertex.glsl";
+import fragment from './shaders/frag.glsl';
+import vertex from './shaders/vertex.glsl';
+
 
 export default class Application {
 
     private app: PIXI.Application;
-
     private worldContainer!: PIXI.Container;
-
+    private fragmentShader!: string;
     private caster!: Caster;
-
     private boundaries: Array<Boundary>
 
     constructor() {
@@ -38,7 +37,8 @@ export default class Application {
             hello: true,
             view: <HTMLCanvasElement>document.getElementById('cont'),
             antialias: true
-        });
+        })
+
 
         const backgroundTexture = await PIXI.Assets.load('/data/images/real.png');
 
@@ -47,6 +47,8 @@ export default class Application {
 
         const background = new PIXI.Sprite(backgroundTexture);
         this.worldContainer.addChild(background);
+
+        console.log(fragment);
 
         const program = new PIXI.GlProgram({
             vertex,
