@@ -17,7 +17,9 @@ export default class Application {
     private worldContainer!: PIXI.Container;
     private fragmentShader!: string;
     private caster!: Caster;
+    private filter!: PIXI.Filter;
     private boundaries: Array<Boundary>
+    private elapsed = 0;
 
     constructor() {
         this.app = new PIXI.Application();
@@ -55,14 +57,14 @@ export default class Application {
             fragment,
         });
 
-        const customFilter = new PIXI.Filter({
+        this.filter = new PIXI.Filter({
             glProgram: program,
             resources: {
-                uniforms: { uTime: { value: 0, type: 'f32' } },
+                timeUniforms: { uTime: { value: 0.0, type: 'f32' } },
             },
         });
 
-        this.worldContainer.filters = [customFilter];
+        this.worldContainer.filters = [this.filter];
 
         // // Screen boundaries
         // const w = this.app.screen.width;
@@ -98,11 +100,13 @@ export default class Application {
         // this.worldContainer.addChild(this.caster);
         // this.worldContainer.mask = this.caster;
 
-        // this.app.ticker.add(this.onTick.bind(this));
+        this.app.ticker.add(this.onTick.bind(this));
     }
 
     onTick() {
         // this.caster.look(this.boundaries)
+        this.elapsed += this.app.ticker.deltaMS / 1000
+        this.filter.resources.timeUniforms.uniforms.uTime = this.elapsed;
     }
 }
 window.addEventListener('DOMContentLoaded', () => new Application);
