@@ -7,8 +7,8 @@ import * as PIXI from 'pixi.js';
 import Caster from './caster';
 import Ray from './ray';
 import Boundary from './boundary';
-import fragment from './shaders/frag.glsl';
-import vertex from './shaders/vertex.glsl';
+import fragment from './shaders/Ascii/frag.glsl';
+import vertex from './shaders/Ascii/vertex.glsl';
 
 
 export default class Application {
@@ -61,6 +61,7 @@ export default class Application {
             glProgram: program,
             resources: {
                 timeUniforms: { uTime: { value: 0.0, type: 'f32' } },
+                asciiUniforms: { uSize: { value: 20.0, type: 'f32' } }
             },
         });
 
