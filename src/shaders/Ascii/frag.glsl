@@ -1,13 +1,21 @@
 #version 300 es
 precision highp float;
 
+// In from vertex
 in vec2 vTextureCoord;
+
+// Out for renderer
 out vec4 finalColor;
 
+// Passed from PIXI
 uniform sampler2D uTexture;
-uniform float uSize;
 uniform vec4 uInputSize;
+
+// Passed by custom filter
+uniform float uSize;
 uniform float uTime;
+uniform float uMaxSize;
+uniform vec2 uMousePosition;
 
 vec2 mapCoord(vec2 coord) {
     coord *= uInputSize.xy; // scale to pixel space
@@ -41,36 +49,46 @@ float character(float n, vec2 p) {
 }
 
 void main() {
+    // // Pixel-space coordinates
     vec2 coord = mapCoord(vTextureCoord);
+    vec2 mousePos = mapCoord(uMousePosition);
 
-    // Mix lerps between sizes
+    // // Distance between pixel and mouse in pixel space
+    // float distanceFromMouse = distance(coord, mousePos);
+    
+    // // Normalize distance
+    // float t = smoothstep(0.0, 300.0, distanceFromMouse); // 300px max influence
+    // float distanceSize = mix(uSize, uMaxSize, t); // Final pixel size for this fragment
 
-    float oscilatingSize = mix(50., 200., abs(sin(uTime)));
+    // // Align pixel to grid
+    // vec2 pixCoord = pixelate(coord, vec2(distanceSize));
+    // pixCoord = unmapCoord(pixCoord); // Convert back to normalized texture space
 
-    // Align to grid
-    vec2 pixCoord = pixelate(coord, vec2(oscilatingSize));
-    pixCoord = unmapCoord(pixCoord);
+    // // Sample the texture
+    // vec4 color = texture(uTexture, pixCoord);
 
-    // Sample texture
-    vec4 color = texture(uTexture, pixCoord);
+    // // Convert to brightness
+    // float gray = (0.3 * color.r + 0.59 * color.g + 0.11 * color.b) * 1.5;
+    // gray = clamp(gray, 0.0, 1.0);
 
-    // Brightness
-    float gray = (0.3 * color.r + 0.59 * color.g + 0.11 * color.b) * 1.5;
-    gray = clamp(gray, 0., 1.);
+    // // Select character pattern based on brightness
+    // float n =  65536.0;             // '.'
+    // if (gray > 0.2) n = 65600.0;    // ':'
+    // if (gray > 0.3) n = 332772.0;   // '*'
+    // if (gray > 0.4) n = 15255086.0; // 'o'
+    // if (gray > 0.5) n = 23385164.0; // '&'
+    // if (gray > 0.6) n = 15252014.0; // '8'
+    // if (gray > 0.7) n = 13199452.0; // '@'
+    // if (gray > 0.8) n = 11512810.0; // '#'
 
-    // ASCII bit patterns
-    float n =  65536.0;             // '.'
-    if (gray > 0.2) n = 65600.0;    // ':'
-    if (gray > 0.3) n = 332772.0;   // '*'
-    if (gray > 0.4) n = 15255086.0; // 'o'
-    if (gray > 0.5) n = 23385164.0; // '&'
-    if (gray > 0.6) n = 15252014.0; // '8'
-    if (gray > 0.7) n = 13199452.0; // '@'
-    if (gray > 0.8) n = 11512810.0; // '#'
+    // // Cell-relative coordinate
+    // vec2 modd = getMod(coord, vec2(distanceSize));
 
-    // Cell position
-    vec2 modd = getMod(coord, vec2(oscilatingSize));
+    // // Final pixel output with ASCII character
+    // finalColor = color * character(n, vec2(-1.0) + modd * 2.0);
 
-    // Output
-    finalColor = color * character(n, vec2(-1.0) + modd * 2.0);
+        
+    float d = distance(coord, mousePos);
+    float t = smoothstep(0.0, 100.0, d);
+    finalColor = vec4(vec3(1.0 - t), 1.0); // White near mouse, dark far away
 }

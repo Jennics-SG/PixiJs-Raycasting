@@ -20,6 +20,7 @@ export default class Application {
     private filter!: PIXI.Filter;
     private boundaries: Array<Boundary>
     private elapsed = 0;
+    private mousePosition= {x: 0, y:0};
 
     constructor() {
         this.app = new PIXI.Application();
@@ -61,53 +62,33 @@ export default class Application {
             glProgram: program,
             resources: {
                 timeUniforms: { uTime: { value: 0.0, type: 'f32' } },
-                asciiUniforms: { uSize: { value: 20.0, type: 'f32' } }
+                filterUniforms: {
+                    uSize: { value: 10.0, type: 'f32' },
+                    uMaxSize: { value: 50.0, type: 'f32' },
+                    uMousePosition: { value: [0, 0], type: 'vec2<f32>' }
+                }
             },
         });
 
         this.worldContainer.filters = [this.filter];
 
-        // // Screen boundaries
-        // const w = this.app.screen.width;
-        // const h = this.app.screen.height;
-        // this.boundaries.push(
-        //     new Boundary(0, 0, w, 0),
-        //     new Boundary(w, 0, w, h),
-        //     new Boundary(w, h, 0, h),
-        //     new Boundary(0, h, 0, 0)
-        // )
-
-        // // Create randomised boundaries
-        // for(let i = 0; i < 3; i++){
-        //     let p1 = new PIXI.Point(
-        //         Math.floor(Math.random() * this.app.screen.width),
-        //         Math.floor(Math.random() * this.app.screen.height)
-        //     );
-        //     let p2 = new PIXI.Point(
-        //         Math.floor(Math.random() * this.app.screen.width),
-        //         Math.floor(Math.random() * this.app.screen.height)
-        //     );
-        //     const bound = new Boundary(p1.x, p1.y, p2.x, p2.y);
-        //     this.boundaries.push(bound)
-        //     this.worldContainer.addChild(bound);
-        // }
-
-        // this.caster = new Caster(
-        //     this.app.screen.width,
-        //     this.app.screen.height,
-        //     30,
-        //     this.app
-        // );
-        // this.worldContainer.addChild(this.caster);
-        // this.worldContainer.mask = this.caster;
-
         this.app.ticker.add(this.onTick.bind(this));
+        document.addEventListener("mousemove", this.onMouseMove.bind(this));
     }
 
     onTick() {
         // this.caster.look(this.boundaries)
         this.elapsed += this.app.ticker.deltaMS / 1000
-        this.filter.resources.timeUniforms.uniforms.uTime = this.elapsed;
+        // this.filter.resources.timeUniforms.uniforms.uTime = this.elapsed;
+        const local = this.worldContainer.toLocal(this.mousePosition)
+        this.filter.resources.filterUniforms.uniforms.uMousePosition = [local.x, local.y]
+    }
+
+    onMouseMove(e: MouseEvent) {
+        // console.log(e.x, e.y)
+        this.mousePosition = {x: e.x, y: e.y};
+        this.filter.resources.filterUniforms.uniforms.uMousePosition.x = e.x;
+        this.filter.resources.filterUniforms.uniforms.uMousePosition.y = e.y;
     }
 }
 window.addEventListener('DOMContentLoaded', () => new Application);
