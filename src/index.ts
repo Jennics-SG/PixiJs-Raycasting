@@ -5,7 +5,6 @@
 
 import * as PIXI from 'pixi.js';
 import Caster from './caster';
-import Ray from './ray';
 import Boundary from './boundary';
 import fragment from './shaders/Ascii/frag.glsl';
 import vertex from './shaders/Ascii/vertex.glsl';
@@ -40,8 +39,7 @@ export default class Application {
             hello: true,
             view: <HTMLCanvasElement>document.getElementById('cont'),
             antialias: true
-        })
-
+        });
 
         const backgroundTexture = await PIXI.Assets.load('/data/images/real.png');
 
@@ -51,8 +49,6 @@ export default class Application {
         const background = new PIXI.Sprite(backgroundTexture);
         this.worldContainer.addChild(background);
 
-        console.log(fragment);
-
         const program = new PIXI.GlProgram({
             vertex,
             fragment,
@@ -61,11 +57,11 @@ export default class Application {
         this.filter = new PIXI.Filter({
             glProgram: program,
             resources: {
-                timeUniforms: { uTime: { value: 0.0, type: 'f32' } },
-                filterUniforms: {
-                    uSize: { value: 10.0, type: 'f32' },
-                    uMaxSize: { value: 50.0, type: 'f32' },
-                    uMousePosition: { value: [0, 0], type: 'vec2<f32>' }
+                uniforms: { 
+                    uTime: { value: 0.0, type: 'f32' },
+                    uSize: { value: 2.0, type: 'f32' },
+                    uMaxSize: { value: 100.0, type: 'f32' },
+                    uMousePosition: { value: [0.0, 0.0], type: 'vec2<f32>' }
                 }
             },
         });
@@ -77,18 +73,18 @@ export default class Application {
     }
 
     onTick() {
-        // this.caster.look(this.boundaries)
-        this.elapsed += this.app.ticker.deltaMS / 1000
-        // this.filter.resources.timeUniforms.uniforms.uTime = this.elapsed;
-        const local = this.worldContainer.toLocal(this.mousePosition)
-        this.filter.resources.filterUniforms.uniforms.uMousePosition = [local.x, local.y]
+        this.elapsed += this.app.ticker.deltaMS / 1000;
+        
+        this.filter.resources.uniforms.uTime = this.elapsed;
+        this.filter.resources.uniforms.uniforms.uMousePosition = [this.mousePosition.x, this.mousePosition.y];  
     }
 
     onMouseMove(e: MouseEvent) {
-        // console.log(e.x, e.y)
-        this.mousePosition = {x: e.x, y: e.y};
-        this.filter.resources.filterUniforms.uniforms.uMousePosition.x = e.x;
-        this.filter.resources.filterUniforms.uniforms.uMousePosition.y = e.y;
+        const rect = this.app.canvas.getBoundingClientRect();
+        this.mousePosition.x = e.clientX - rect.left;
+        this.mousePosition.y = e.clientY - rect.top;
+        
+        console.log('Mouse move:', this.mousePosition.x, this.mousePosition.y);
     }
 }
 window.addEventListener('DOMContentLoaded', () => new Application);
